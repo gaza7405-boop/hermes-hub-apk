@@ -2,7 +2,7 @@ name: Build Android APK
 
 on:
   push:
-    branches: [ master, main ]
+    branches: [ main, master ]
 
 jobs:
   build:
@@ -21,22 +21,10 @@ jobs:
     - name: Setup Android SDK
       uses: android-actions/setup-android@v2
 
-    - name: Grant execute permission for gradlew
+    - name: Build with Gradle
       run: |
-        cd /home/runner/work/hermes-apk/hermes-apk || cd .
-        # If gradlew doesn't exist, we can use gradle or generate it
-        if [ ! -f ./gradlew ]; then
-          gradle wrapper --gradle-version 7.5
-        fi
-        chmod +x ./gradlew || true
-
-    - name: Build APK with Gradle
-      run: |
-        if [ -f ./gradlew ]; then
-          ./gradlew assembleDebug
-        else
-          gradle assembleDebug
-        fi
+        chmod +x gradlew || true
+        ./gradlew assembleDebug || gradle assembleDebug
 
     - name: Upload APK artifact
       uses: actions/upload-artifact@v3
