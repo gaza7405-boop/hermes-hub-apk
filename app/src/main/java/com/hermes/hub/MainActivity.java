@@ -9,11 +9,14 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.os.Handler;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 
 public class MainActivity extends Activity {
     private WebView webView;
     private Handler handler = new Handler();
     private Runnable pingRunnable;
+    private static final String SECRET_TOKEN = "hermes_secure_token_9951";
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
@@ -31,6 +34,12 @@ public class MainActivity extends Activity {
 
         webView.setWebViewClient(new WebViewClient() {
             @Override
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                view.loadUrl(request.getUrl().toString());
+                return true;
+            }
+
+            @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 view.loadUrl(url);
                 return true;
@@ -38,20 +47,20 @@ public class MainActivity extends Activity {
             
             @Override
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-                // إعادة المحاولة التلقائية عند انقطاع الشبكة
                 handler.postDelayed(() -> webView.reload(), 3000);
             }
         });
 
-        // تحميل واجهة السيرفر
-        webView.loadUrl("http://187.124.6.112:8089");
+        // تمرير رمز الأمان الخاص بكِ تلقائياً مع الرابط لضمان عدم دخول أي شخص آخر
+        String secureUrl = "http://187.124.6.112:8089/?token=" + SECRET_TOKEN;
+        webView.loadUrl(secureUrl);
         setContentView(webView);
 
-        // بدء خدمة الحفاظ على الاتصال في الخلفية
+        // تشغيل خدمة الخلفية للحفاظ على استقرار الشبكة
         Intent serviceIntent = new Intent(this, ConnectionKeepAliveService.class);
         startService(serviceIntent);
 
-        // آلية فحص الاتصال وإعادة التحميل الذاتي كل 10 ثوانٍ إذا حدث انقطاع
+        // مراقبة الاتصال وإعادة التحميل تلقائياً عند انقطاع النت
         pingRunnable = new Runnable() {
             @Override
             public void run() {
