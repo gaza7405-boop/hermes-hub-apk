@@ -3,10 +3,11 @@ name: Build Android APK
 on:
   push:
     branches: [ main, master ]
+  workflow_dispatch:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
     - name: Checkout code
@@ -21,14 +22,10 @@ jobs:
     - name: Setup Android SDK
       uses: android-actions/setup-android@v2
 
-    - name: Generate Gradle Wrapper
-      run: |
-        gradle wrapper --gradle-version 7.5
-
     - name: Build with Gradle
       run: |
-        chmod +x gradlew
-        ./gradlew assembleDebug
+        chmod +x gradlew || true
+        ./gradlew assembleDebug || gradle assembleDebug
 
     - name: Upload APK artifact
       uses: actions/upload-artifact@v3
