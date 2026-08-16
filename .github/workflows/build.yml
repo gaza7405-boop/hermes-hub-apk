@@ -19,14 +19,24 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
-    - name: Generate Gradle Wrapper
-      run: gradle wrapper --gradle-version 7.4.2
+    - name: Install Android SDK Commandline Tools
+      run: |
+        mkdir -p $HOME/android-sdk/cmdline-tools/latest
+        wget -q https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O cmdline-tools.zip
+        unzip -q cmdline-tools.zip -d $HOME/android-sdk/cmdline-tools
+        mv $HOME/android-sdk/cmdline-tools/cmdline-tools $HOME/android-sdk/cmdline-tools/latest
+        export ANDROID_HOME=$HOME/android-sdk
+        export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools
+        yes | sdkmanager --licenses || true
+        sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.2"
 
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
-
-    - name: Build Debug APK
-      run: ./gradlew assembleDebug --stacktrace
+    - name: Build with Gradle
+      run: |
+        export ANDROID_HOME=$HOME/android-sdk
+        gradle init --type basic --dsl groovy --project-name HermesHub --qa false || true
+        # Create standard local.properties
+        echo "sdk.dir=$HOME/android-sdk" > local.properties
+        ./gradlew assembleDebug --stacktrace || gradle assembleDebug --stacktrace
 
     - name: Upload APK artifact
       uses: actions/upload-artifact@v4
