@@ -27,11 +27,12 @@ jobs:
 
     - name: Build with Gradle
       run: |
+        export org.gradle.jvmargs="-Xmx2048m -Dfile.encoding=UTF-8"
         if [ ! -f gradlew ]; then
-          gradle wrapper --gradle-version 7.4.2
+          gradle wrapper --gradle-version 7.5
         fi
         chmod +x gradlew
-        ./gradlew assembleDebug --stacktrace
+        ./gradlew clean assembleDebug --stacktrace --info
 
     - name: Upload APK artifact
       uses: actions/upload-artifact@v4
