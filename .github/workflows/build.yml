@@ -22,13 +22,14 @@ jobs:
     - name: Setup Android SDK
       uses: android-actions/setup-android@v3
 
-    - name: Create local.properties and Wrapper
-      run: |
-        echo "sdk.dir=$ANDROID_HOME" > local.properties
-        gradle wrapper --gradle-version 7.4.2
+    - name: Create local.properties
+      run: echo "sdk.dir=$ANDROID_HOME" > local.properties
 
     - name: Build with Gradle
       run: |
+        if [ ! -f gradlew ]; then
+          gradle wrapper --gradle-version 7.4.2
+        fi
         chmod +x gradlew
         ./gradlew assembleDebug --stacktrace
 
