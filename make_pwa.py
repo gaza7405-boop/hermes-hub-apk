@@ -1,0 +1,21 @@
+import os
+
+manifest = """{
+  "name": "Hermes Remote Hub",
+  "short_name": "HermesHub",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#3b82f6",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}"""
+
+with open("/opt/data/hermes-apk/manifest.json", "w") as f:
+    f.write(manifest)
+print("Manifest written")

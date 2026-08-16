@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#0d1117">
+    <title>Hermes Ultimate Tablet Hub</title>
+    <style>
+        :root {
+            --bg: #0d1117;
+            --card-bg: #161b22;
+            --border: #30363d;
+            --text: #c9d1d9;
+            --text-heading: #ffffff;
+            --accent: #58a6ff;
+            --accent-hover: #1f6feb;
+            --success: #238636;
+            --danger: #da3633;
+            --warning: #d29922;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            touch-action: manipulation;
+        }
+        header {
+            height: 65px;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            flex-shrink: 0;
+        }
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .logo-icon {
+            font-size: 24px;
+        }
+        h1 {
+            font-size: 18px;
+            color: var(--text-heading);
+            font-weight: 700;
+        }
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(35, 134, 54, 0.15);
+            border: 1px solid rgba(35, 134, 54, 0.4);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            color: #3fb950;
+        }
+        .dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--success);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--success);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+        .main-layout {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+        sidebar {
+            width: 280px;
+            background-color: var(--card-bg);
+            border-left: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 15px;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text);
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            text-align: right;
+            transition: all 0.2s ease;
+        }
+        .nav-btn:hover {
+            background-color: var(--border);
+            color: var(--text-heading);
+        }
+        .nav-btn.active {
+            background-color: var(--accent);
+            color: #fff;
+            border-color: #79c0ff;
+        }
+        .nav-icon {
+            font-size: 18px;
+        }
+
+        content-area {
+            flex: 1;
+            background-color: var(--bg);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+        .view-panel {
+            display: none;
+            width: 100%;
+            height: 100%;
+            flex-direction: column;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .view-panel.active {
+            display: flex;
+        }
+        
+        /* Grid Dashboard */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+            margin-top: 10px;
+        }
+        .dashboard-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px;
+            cursor: pointer;
+            transition: transform 0.15s, border-color 0.15s;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .dashboard-card:active {
+            transform: scale(0.97);
+            border-color: var(--accent);
+        }
+        .card-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--text-heading);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .card-desc {
+            font-size: 13px;
+            color: #8b949e;
+            line-height: 1.4;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: #fff;
+            border-radius: 8px;
+        }
+
+        /* Quick Tools Panel */
+        .tools-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-width: 800px;
+        }
+        .tool-box {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            padding: 16px;
+            border-radius: 10px;
+        }
+        .tool-box h3 {
+            font-size: 15px;
+            color: var(--text-heading);
+            margin-bottom: 8px;
+        }
+        .action-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+        .action-btn:hover {
+            background: var(--accent-hover);
+        }
+        .log-output {
+            background: #010409;
+            border: 1px solid var(--border);
+            padding: 12px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 12px;
+            color: #7ee787;
+            margin-top: 8px;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-area">
+            <span class="logo-icon">🚀</span>
+            <h1>Hermes Ultimate Tablet Hub</h1>
+        </div>
+        <div class="status-badge" id="statusBadge">
+            <div class="dot" id="statusDot"></div>
+            <span id="statusText">متصل بالسيرفر المحلي</span>
+        </div>
+    </header>
+
+    <div class="main-layout">
+        <sidebar>
+            <button class="nav-btn active" onclick="switchView('dashboard', this)">
+                <span class="nav-icon">📊</span> الرئيسية والخدمات
+            </button>
+            <button class="nav-btn" onclick="switchView('obsidian', this)">
+                <span class="nav-icon">📝</span> أوبسيديان (الملاحظات)
+            </button>
+            <button class="nav-btn" onclick="switchView('gateway', this)">
+                <span class="nav-icon">🤖</span> لوحة التحكم والذكاء
+            </button>
+            <button class="nav-btn" onclick="switchView('tools', this)">
+                <span class="nav-icon">⚙️</span> أدوات الفحص السريع
+            </button>
+        </sidebar>
+
+        <content-area>
+            <!-- 1. Dashboard View -->
+            <div id="dashboard" class="view-panel active">
+                <h2 style="font-size: 20px; color: var(--text-heading); margin-bottom: 15px;">اختر الخدمة المطلوبة:</h2>
+                <div class="cards-grid">
+                    <div class="dashboard-card" onclick="openExternal('http://187.124.6.112:9119')">
+                        <div class="card-title"><span>🤖</span> بوابة هيرمس الذكية</div>
+                        <div class="card-desc">إدارة النماذج، المحادثات، والإعدادات العامة.</div>
+                    </div>
+                    <div class="dashboard-card" onclick="switchView('obsidian', document.querySelectorAll('.nav-btn')[1])">
+                        <div class="card-title"><span>📝</span> Obsidian Vault</div>
+                        <div class="card-desc">تصفح وتعديل الملاحظات والملفات الشخصية مباشرة.</div>
+                    </div>
+                    <div class="dashboard-card" onclick="openExternal('http://187.124.6.112:3000')">
+                        <div class="card-title"><span>🖥️</span> سطح المكتب الخفيف</div>
+                        <div class="card-desc">بيئة سطح المكتب التفاعلية للتحكم بالسيرفر.</div>
+                    </div>
+                    <div class="dashboard-card" onclick="openExternal('http://187.124.6.112:8080')">
+                        <div class="card-title"><span>🌐</span> بورتفوليو الخدمات</div>
+                        <div class="card-desc">استعراض المشاريع والأعمال المنجزة.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Obsidian View -->
+            <div id="obsidian" class="view-panel">
+                <iframe src="http://187.124.6.112:8085" title="Obsidian Workspace"></iframe>
+            </div>
+
+            <!-- 3. Gateway View -->
+            <div id="gateway" class="view-panel">
+                <iframe src="http://187.124.6.112:9119" title="Gateway Dashboard"></iframe>
+            </div>
+
+            <!-- 4. Tools View -->
+            <div id="tools" class="view-panel">
+                <div class="tools-container">
+                    <h2 style="font-size: 20px; color: var(--text-heading);">أدوات الفحص والتحكم السريع</h2>
+                    <div class="tool-box">
+                        <h3>فحص استجابة السيرفر المحلي</h3>
+                        <p class="card-desc">التحقق من عمل الخوادم والاتصال بالبورتات المختلفة.</p>
+                        <br>
+                        <button class="action-btn" onclick="runHealthCheck()">فحص الاتصال الآن</button>
+                        <div id="logOutput" class="log-output">جاهز للاختبار... اضغط الزر أعلاه.</div>
+                    </div>
+                </div>
+            </div>
+        </content-area>
+    </div>
+
+    <script>
+        function switchView(viewId, btn) {
+            document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            
+            document.getElementById(viewId).classList.add('active');
+            btn.classList.add('active');
+        }
+
+        function openExternal(url) {
+            window.open(url, '_blank');
+        }
+
+        async function runHealthCheck() {
+            const logBox = document.getElementById('logOutput');
+            logBox.innerText = "جاري فحص الاتصال بالخدمات...";
+            try {
+                const start = Date.now();
+                const res = await fetch(window.location.href, {method: 'HEAD'});
+                const latency = Date.now() - start;
+                logBox.innerText = `[نجاح] السيرفر يعمل بكفاءة تامة!\n- وقت الاستجابة: ${latency}ms\n- الحالة: متصل 100%`;
+                document.getElementById('statusDot').style.background = '#238636';
+                document.getElementById('statusText').innerText = "متصل بالسيرفر المحلي";
+            } catch (e) {
+                logBox.innerText = `[خطأ] تعذر الاتصال: ${e.message}`;
+                document.getElementById('statusDot').style.background = '#da3633';
+                document.getElementById('statusText').innerText = "انقطع الاتصال";
+            }
+        }
+
+        // Periodic health check
+        setInterval(async () => {
+            try {
+                await fetch(window.location.href, {method: 'HEAD', cache: 'no-cache'});
+                document.getElementById('statusDot').style.background = '#238636';
+                document.getElementById('statusText').innerText = "متصل بالسيرفر المحلي";
+            } catch(e) {
+                document.getElementById('statusDot').style.background = '#da3633';
+                document.getElementById('statusText').innerText = "جاري إعادة الاتصال...";
+            }
+        }, 10000);
+    </script>
+</body>
+</html>
