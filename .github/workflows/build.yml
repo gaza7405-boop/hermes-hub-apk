@@ -21,10 +21,14 @@ jobs:
     - name: Setup Android SDK
       uses: android-actions/setup-android@v2
 
+    - name: Generate Gradle Wrapper
+      run: |
+        gradle wrapper --gradle-version 7.5
+
     - name: Build with Gradle
       run: |
-        chmod +x gradlew || true
-        ./gradlew assembleDebug || gradle assembleDebug
+        chmod +x gradlew
+        ./gradlew assembleDebug
 
     - name: Upload APK artifact
       uses: actions/upload-artifact@v3
